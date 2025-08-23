@@ -53,7 +53,14 @@ app.put('/api/products/:id', async (req, res) => {
     }
 });
 
-//console.log(process.env.MONGO_URI);
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 app.listen(5000, () => {
     connectDB();
