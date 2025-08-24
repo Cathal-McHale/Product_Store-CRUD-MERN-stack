@@ -2,7 +2,7 @@ import React from "react"
 import { useColorModeValue } from "@chakra-ui/react"
 import { Routes } from "react-router-dom"
 import CreatePage from "./pages/CreatePage"
-import Home from "./pages/homepage"
+import Homepage from "./pages/homepage"
 import NavBar from "./components/NavBar"
 import { Box } from "@chakra-ui/react"
 import { Route } from "react-router-dom"
@@ -14,7 +14,7 @@ function App() {
     <Box minH="100vh" bg={appBg}>
       <NavBar />
       <Routes>
-        <Route path="/homepage" element={<Home />} />
+        <Route path="/homepage" element={<Homepage />} />
         <Route path="/CreatePage" element={<CreatePage />} />
       </Routes>
     </Box>

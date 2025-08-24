@@ -25,6 +25,13 @@ const useProductStore = create((set) => ({
         } catch (error) {
             return { success: false, message: error.message || "Network error" };
         }
+    },
+
+    fetchProducts: async ()=>{
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        set({products: data.data})
+
     }
 
 }));
