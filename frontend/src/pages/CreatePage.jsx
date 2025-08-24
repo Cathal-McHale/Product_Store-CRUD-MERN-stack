@@ -1,5 +1,6 @@
 import { Box, VStack, Container, Heading, FormControl, FormLabel, Input, Textarea, Button, useColorModeValue } from '@chakra-ui/react';
 import React from 'react'
+import useProductStore from '../store/product';
 
 const CreatePage = () => {
     const [newProduct, setNewProduct] = React.useState({
@@ -11,10 +12,15 @@ const CreatePage = () => {
 
     const boxBg = useColorModeValue('white', 'gray.800');
 
-    const handleSubmit = (e) => {
+    const{createProduct}=useProductStore()
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // TODO: Add API call to create product
-        console.log('Product created:', newProduct);
+        const {success,message} = await createProduct(newProduct)
+        console.log(success)
+        console.log(message)
+        setNewProduct({name:"", price:"",description:"", image:""})
     };
 
   return (
