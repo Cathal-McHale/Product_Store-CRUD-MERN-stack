@@ -1,10 +1,41 @@
 import { Heading, HStack, IconButton, Box, Image, Text, useColorModeValue, Button } from '@chakra-ui/react'
 import React from 'react'
 //import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
+import useProductStore from '../store/product';
+import { useToast } from "@chakra-ui/react";
 
 const ProductCard = ({product}) => {
   const textColor = useColorModeValue("gray.600", "gray.300");
   const bg = useColorModeValue("white", "gray.800");
+
+  const {deleteProduct, products, setProducts} = useProductStore();
+  const toast = useToast();
+
+  const handleDeleteProduct = async () => {
+    const { success, message } = await deleteProduct(product._id);
+    if (success && message.toLowerCase().includes('deleted')) {
+      setProducts(products.filter(p => p._id !== product._id));
+      toast({
+        title: 'Success',
+        description: message,
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+        variant: 'subtle',
+      });
+    } else {
+      toast({
+        title: 'Error',
+        description: message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      });
+    }
+  };
+
   return (
     <Box
       shadow="lg"
@@ -31,8 +62,8 @@ const ProductCard = ({product}) => {
         </Text>
 
         <HStack spacing={2}>
-          <Button colorScheme="red">Edit</Button>
-          <Button colorScheme="red">Delete</Button>
+          <Button colorScheme="blue">Edit</Button>
+          <Button colorScheme="red" onClick={handleDeleteProduct}>Delete</Button>
         </HStack>
       </Box>
     </Box>
