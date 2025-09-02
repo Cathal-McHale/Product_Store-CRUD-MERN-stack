@@ -1,14 +1,24 @@
-import { Heading, HStack, IconButton, Box, Image, Text, useColorModeValue, Button, Modal, useDisclosure, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, VStack, Input, ModalFooter } from '@chakra-ui/react'
+import { Heading, HStack, IconButton, Box, Image, Text, useColorModeValue, Button, Modal, useDisclosure, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, VStack, Input, ModalFooter, ModalBody } from '@chakra-ui/react'
 import React from 'react'
 //import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import useProductStore from '../store/product';
 import { useToast } from "@chakra-ui/react";
+import { useState } from 'react';
+
 
 const ProductCard = ({product}) => {
+  const [updatedProduct, setUpdatedProduct] = useState({
+    name: product.name || "",
+    price: product.price || "",
+    description: product.description || "",
+    image: product.image || ""
+  });
+
+
   const textColor = useColorModeValue("gray.600", "gray.300");
   const bg = useColorModeValue("white", "gray.800");
 
-  const {deleteProduct, products, setProducts} = useProductStore();
+  const {deleteProduct,  products, setProducts} = useProductStore();
   const toast = useToast();
 
   const {isOpen, onOpen, onClose} = useDisclosure();
@@ -37,6 +47,20 @@ const ProductCard = ({product}) => {
       });
     }
   };
+  const { updateProduct } = useProductStore();
+  const handleUpdateProduct = async (pid, updatedProductData) => {
+    const { success, message } = await updateProduct(pid, updatedProductData);
+    toast({
+      title: success ? 'Success' : 'Error',
+      description: message,
+      status: success ? 'success' : 'error',
+      duration: 3000,
+      isClosable: true,
+      position: 'top',
+      variant: 'subtle',
+    });
+    if (success) onClose();
+  } 
 
   return (
     <Box
@@ -64,7 +88,9 @@ const ProductCard = ({product}) => {
         </Text>
 
         <HStack spacing={2}>
-          <Button colorScheme="blue" onClick={onOpen}>Edit</Button>
+          <Button colorScheme="blue" onClick={onOpen}>
+            Edit
+          </Button>
           <Button colorScheme="red" onClick={handleDeleteProduct}>
             Delete
           </Button>
@@ -74,31 +100,63 @@ const ProductCard = ({product}) => {
         <ModalOverlay />
 
         <ModalContent>
-            <ModalHeader>Update Product</ModalHeader>
-            <ModalCloseButton/>
-            <modalBody>
-                <VStack spacing={4}>
-                    <Input placeholder='Product name'
-                    name='name'/>
-                    <Input placeholder='Price'
-                    name='price'/>
-                    <Input placeholder='Product description'
-                    name='description'/>
-                    <Input placeholder='Product Image'
-                    name='image'/>
-
-                </VStack>
-            </modalBody>
-            <ModalFooter>
-                <Button colorScheme='blue' mr={3}>
-                    Update Product
-                </Button>
-                <Button variant='ghost' onClick={onClose}>
-                    Cancel
-                </Button>
-            </ModalFooter>
+          <ModalHeader>Update Product</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <Input
+                placeholder="Product name"
+                name="name"
+                value={updatedProduct.name}
+                onChange={(e) =>
+                  setUpdatedProduct({ ...updatedProduct, name: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Price"
+                name="price"
+                value={updatedProduct.price}
+                onChange={(e) =>
+                  setUpdatedProduct({
+                    ...updatedProduct,
+                    price: e.target.value,
+                  })
+                }
+              />
+              <Input
+                placeholder="Product description"
+                name="description"
+                value={updatedProduct.description}
+                onChange={(e) =>
+                  setUpdatedProduct({
+                    ...updatedProduct,
+                    description: e.target.value,
+                  })
+                }
+              />
+              <Input
+                placeholder="Product Image"
+                name="image"
+                value={updatedProduct.image}
+                onChange={(e) =>
+                  setUpdatedProduct({ ...updatedProduct, image: e.target.value })
+                }
+              />
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => handleUpdateProduct(product._id, updatedProduct)}
+            >
+              Update Product
+            </Button>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+          </ModalFooter>
         </ModalContent>
-
       </Modal>
     </Box>
   );
